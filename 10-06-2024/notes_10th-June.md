@@ -632,7 +632,9 @@ inner join orders o
 on o.customer_id = hii.customer_id
 where purch_amt > avge;
 
-select customer_id,avg(purch_amt) as avge from orders group by customer_id;
+select * from orders o
+			where o.purch_amt > (select avg(purch_amt) from orders as i
+									where i.customer_id = o.customer_id);
 
 
 -- Task 6
@@ -768,9 +770,3 @@ having count(c.salesman_id) > 1;
 - datepart (Extracts the part from the date)  
   `select DATEPART(month,getdate());`
   `select DATEPART(day,getdate());`
-
-
-
-
-
-

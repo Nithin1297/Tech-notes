@@ -14,7 +14,7 @@ CREATE TABLE employees (
     manager_id INT,
     FOREIGN KEY (department_id) REFERENCES departments(department_id),
     FOREIGN KEY (manager_id) REFERENCES employees(employee_id)
-);
+); 
 
 
 INSERT INTO departments (department_id, department_name) VALUES

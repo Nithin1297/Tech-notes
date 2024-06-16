@@ -108,7 +108,7 @@ join Projects p on e.EmployeeID = p.EmployeeID
 where p.ProjectID is null or p.ProjectID is not null;
 
 
--- Exercise 5: Get the list of employees working in 'San Francisco' and their projects
+-- Exercise 5:  Get the list of employees working in 'San Francisco' and their projects
 
 select * from Employees
 select * from Departments

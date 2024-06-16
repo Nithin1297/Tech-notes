@@ -13,7 +13,7 @@ CREATE TABLE Projects (
     ProjectName NVARCHAR(50),
     ProjectManagerID INT,
     Department NVARCHAR(50)
-);
+); 
 
 CREATE TABLE Participations (
     EmployeeID INT,

@@ -233,6 +233,15 @@ HAVING SUM(a.balance) > 10000;
 
 > 14. Identify and list duplicate transactions based on transaction amount, date, and account.
 
+```sql
+SELECT transaction_id, account_id, amount, transaction_date, COUNT(*) AS duplicate_count
+FROM Transactions
+GROUP BY transaction_id,account_id, amount, transaction_date
+HAVING COUNT(*) > 1;
+```
+
+![q14](./images/q14.png)
+
 > 15. Calculate the total balance for each account type, including a subquery within the SELECT clause.
 
 ```sql

@@ -52,7 +52,7 @@ select * from employees;
 select * from departments;
 
 select employee_id,concat(first_name, last_name) as employee_name, salary from employees 
-where salary > (select min(salary) from employees where department_id = (select department_id from departments where department_name = 'HR'))
+where salary > ANY(select min(salary) from employees where department_id = (select department_id from departments where department_name = 'HR'))
 ;
 
  

@@ -66,6 +66,8 @@ select "Name" from Employees
 intersect
 select "Name" from Contractors
 
+select * from Employees
+select * from Contractors
 select "Name" from Employees
 union
 select "Name" from Contractors
@@ -74,6 +76,8 @@ select "Name" from Employees
 union all
 select "Name" from Contractors
 
+select * from Employees
+select * from Contractors
 select "Name" from Employees
 except
 select "Name" from Contractors

@@ -197,24 +197,18 @@ SELECT
 FROM Customers c
 JOIN Accounts a ON c.customer_id = a.customer_id
 GROUP BY c.customer_id, a.account_type
-HAVING SUM(a.balance) > 20000
+--HAVING SUM(a.balance) > 20000
 ORDER BY total_balance DESC;
+
 
 -- 14. Identify and list duplicate transactions based on transaction amount, date, and account.
 
--- mistake
-SELECT
-  t1.transaction_id AS duplicate_transaction_id,
-  t1.account_id,
-  t1.amount,
-  t1.transaction_date
-FROM Transactions t1
-JOIN Transactions t2
-  ON t1.account_id = t2.account_id
-  AND t1.amount = t2.amount
-  AND t1.transaction_date = t2.transaction_date
-  AND t1.transaction_id < t2.transaction_id
-ORDER BY t1.account_id, t1.transaction_date;
+SELECT * FROM Transactions
+
+SELECT transaction_id, account_id, amount, transaction_date, COUNT(*) AS duplicate_count
+FROM Transactions
+GROUP BY transaction_id,account_id, amount, transaction_date
+HAVING COUNT(*) > 1;
 
 -- 15. Calculate the total balance for each account type, including a subquery within the SELECT clause.
 

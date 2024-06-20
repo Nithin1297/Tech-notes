@@ -159,7 +159,7 @@ select Reverse('pandu');
 -- abs
 select abs(-2);
 -- power
-select power(5,2);
+select power(5.5,2);
 -- round
 select round(58.2644,2) as r;
 -- ceiling
@@ -171,9 +171,9 @@ select floor(58.2644);
 -- getdate
 select GETDATE() as today;
 -- dateadd
-select dateadd(day, 10, getdate());
+select dateadd(month, 6, getdate());
 -- datediff
-select datediff(YEAR,'2002-05-30',getdate());
+select datediff(year,'2002-05-30',getdate());
 -- format
 select GETDATE() as today;
 SELECT FORMAT(GETDATE(), 'MM/dd/yyyy');

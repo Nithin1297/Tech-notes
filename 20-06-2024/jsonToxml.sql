@@ -177,17 +177,59 @@ for xml path
 
 
 
-                                        select *
-                                        from movies
+select *
+from movies
 
-                                        Drop function dbo.sayhiii
+Drop function dbo.sayhiii
 
-                                        create Function sayhiii(@name varchar(20))
+create Function sayhiii(@name varchar(20))
 Returns varchar(20)
 as 
 begin
-                                            return ('Hii ' + @name)
-                                        end;
+    return ('Hii ' + @name)
+end;
 
 
-                                        select dbo.sayhiii('Nithin')
+select dbo.sayhiii('Nithin')
+
+create Function calcYear(@year int)
+Returns int
+as 
+begin
+return 2030 - @year
+end;
+
+drop function calcYear
+
+select *, dbo.calcYear(year(releaseYear)) as age
+from movies
+
+select *, dbo.calcYear(year(releaseYear)) as age
+from movies m
+                                        order by m.releaseYear desc
+offset 3 rows fetch next 3 rows only
+
+-- Views
+
+create view vwLastDeadeMovies
+AS
+select movietitle,releaseYear from movies
+-- where releaseYear between 2024-05-20 and 2024-05-23
+drop view vwLastDeadeMovies
+
+select * from movies
+select * from vwLastDeadeMovies -- virtual Table / copy by reference
+-- Benifits of views
+-- complex statement - easy readability
+-- adstraction
+-- security -- access control for only specific rows of column of the virtual table
+
+create view vwPhaniMovies
+AS
+select m.movietitle
+from movies m
+join director d on d.directorID = m.directorID
+where d.directorName = 'phani'
+
+select * from vwPhaniMovies
+

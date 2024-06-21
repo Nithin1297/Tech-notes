@@ -20,6 +20,7 @@
 
 1. aggregate functions
 2. string
-3. date
-4. rank
-5. format (cast,convert)
+3. Math
+4. date
+5. rank
+6. format (cast,convert)

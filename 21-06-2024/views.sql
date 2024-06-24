@@ -1,4 +1,4 @@
-create database viewdb
+﻿create database viewdb
 use viewdb
 
 CREATE TABLE Movies
@@ -84,6 +84,7 @@ from MovieActors
 
 -- Exercise 1: View for Movies Released After 2015
 -- Task: Create a view named ViewMoviesAfter2015 that selects movies released after the year 2015.
+
 create view ViewMoviesAfter2015
 AS
     Select *
@@ -148,7 +149,7 @@ from ViewTopGrossingMoviesPerGenre
 -- Exercise 5: View for Actor's Total Box Office Collection
 -- Task: Create a view named ViewActorTotalBoxOffice that shows the total box office collection for each actor 
 --across all their movies.
-
+GO
 Create view ViewActorTotalBoxOffice
 as
     select concat(a.FirstName,' ',a.LastName) as Names , sum(m.BoxOffice) as TotalBoxoffice
@@ -156,29 +157,29 @@ as
         Join MovieActors ma ON m.MovieID = ma.MovieID
         Join Actors a ON a.ActorID = ma.ActorID
     group by concat(a.FirstName,' ',a.LastName)
-
+GO
 select *
 from ViewActorTotalBoxOffice
 
 -- Exercise 6: View for Actor's Age and Movie Roles
 -- Task: Create a view named ViewActorAgeAndRoles that shows each actor's age when acted that movie 
 -- & also their current age and the roles they played in different movies.
-
+GO
 create function ActorAgeAtRelease(@releaseyear int , @age date)
 returns int
 begin
     return @releaseyear - year(@age)
 end
-
+GO
 create function ActorAgeAtPresent(@dob date)
 returns int
 begin
     return year(getdate()) - year(@dob)
 end
-
+GO
 drop function ActorAgeAtRelease
 drop function ActorAgeAtPresent
-
+GO
 create view ViewActorAgeAndRoles
 as
     select concat(a.FirstName,' ',a.LastName) as Names,
@@ -190,7 +191,7 @@ as
     from Movies m
         Join MovieActors ma ON m.MovieID = ma.MovieID
         Join Actors a ON a.ActorID = ma.ActorID
-
+GO
 select *
 from ViewActorAgeAndRoles
 
@@ -203,7 +204,7 @@ from MovieActors
 
 -- Exercise 1: Scalar Function to Calculate Movie Age
 -- Task: Create a scalar function named dbo.CalculateMovieAge that takes a MovieID and returns the age of the movie in years.
-
+GO
 create function CalculateMovieAge(@id int)
 returns int
 begin
@@ -213,7 +214,7 @@ begin
     where MovieID = @id
     return year(getdate()) - @releaseyear
 end
-
+GO
 select Title, ReleaseYear, dbo.CalculateMovieAge(MovieID) as [Movie Age]
 from Movies
 
@@ -221,17 +222,61 @@ from Movies
 -- Task: Create an inline table-valued function named dbo.GetMoviesByBudgetRange 
 -- that takes MinBudget and MaxBudget and returns movies within that budget range.
 go
-create function GetMoviesByBudgetRange(@min int,@max int)
+create function GetMoviesByBudgetRange(@min Decimal(18,2),@max Decimal(18,2))
 returns Table
-begin
-    select
-end
+As
+RETURN(
+    select *
+from Movies
+WHERE budget BETWEEN @min AND @max
+);
+GO
 
+select *
+from dbo.GetMoviesByBudgetRange(50000000,200000000)
 -- Exercise 3: Multi-Statement Table-Valued Function for Top Actors by Movie Count
 -- Task: Create a multi-statement table-valued function named dbo.GetTopActorsByMovieCount 
 -- that returns actors who have acted in more than 2 movies.
+GO
+CREATE FUNCTION dbo.GetTopActorsByMovieCount()
+RETURNS @TopActorsTable TABLE
+(
+    ActorID INT,
+    FirstName NVARCHAR(30),
+    LastName NVARCHAR(30),
+    MovieCount int
+)
+AS
+BEGIN
+
+    insert into @TopActorsTable
+    select a.ActorID, COUNT(*) as TotalCount, a.FirstName, a.LastName
+    FROM Movies m
+        Join MovieActors ma ON m.MovieID = ma.MovieID
+        join Actors a on ma.ActorID = a.ActorID
+    GROUP by a.ActorID, a.FirstName, a.LastName
+    HAVING COUNT(*) = 2
+
+    RETURN
+END
+GO
+DROP FUNCTION dbo.GetTopActorsByMovieCount
+
+SELECT *
+FROM dbo.GetTopActorsByMovieCount()
+
+SELECT *
+FROM MovieActors
+SELECT *
+FROM Actors
 
 
+-- Ex - 5
+SELECT MovieID, a.ActorID, a.FirstName, a.LastName, COUNT(ma.Role) as TotRoles
+from MovieActors ma
+    JOIN Actors a ON a.ActorID = ma.ActorID
+GROUP BY MovieID,a.ActorID,a.FirstName,a.LastName
+HAVING COUNT(ma.Role) > 1
 
 -- 1. Scalar
 Go
@@ -259,7 +304,7 @@ Where Genre = @Genre
 Go
 
 -- 3. MTVF
-
+GO
 Create Function dbo.GetMoviesAfter2015()
 Returns @LatestDecadeMovies Table(Title varchar(100),
     ReleaseYear Int,
@@ -276,7 +321,7 @@ Begin
     -- delete
     Return;
 End
-
+GO
 Select *
 from dbo.GetMoviesAfter2015()
 
@@ -332,6 +377,7 @@ BEGIN
 	when @result >  50 then 'Senior'
 	end
 END
+GO
 drop function age
 
 select concat(FirstName,' ',LastName) as Name, (GETDATE() - BirthDate) As age,
@@ -389,7 +435,7 @@ Begin
     Set @Counter = @Counter - 1
 
 End
-
+GO
 CREATE PROCEDURE spGetMoviesByGenre
     @Genre VARCHAR(20)
 as
@@ -402,3 +448,116 @@ END
 EXEC spGetMoviesByGenre 'Action'
 
 EXECUTE spGetMoviesByGenre 'Action'
+GO
+
+
+-- 24th June 
+-- Takes 2 mins to execute
+Create Table Employees
+(
+    Id int primary key identity,
+    [Name] nvarchar(50),
+    Email nvarchar(50),
+    Department nvarchar(50)
+)
+Go
+SET NOCOUNT ON
+Declare @counter int = 1
+While(@counter <= 1000000)
+Begin
+    Declare @Name nvarchar(50) = 'ABC ' + RTRIM(@counter)
+    Declare @Email nvarchar(50) = 'abc' + RTRIM(@counter) + '@proclink.com'
+    Declare @Dept nvarchar(10) = 'Dept ' + RTRIM(@counter)
+    Insert into Employees
+    values
+        (@Name, @Email, @Dept)
+    Set @counter = @counter +1
+    If(@Counter%100000 = 0)
+		Print RTRIM(@Counter) + ' rows inserted'
+End
+--
+SELECT *
+FROM Employees
+WHERE id = 789829
+-- Index seek 1 row
+
+SELECT *
+FROM Employees
+WHERE [Name] = 'ABC 893939'
+-- Index scan all rows
+
+EXEC sp_helpindex Employees
+
+-- clustered (pk) (Decides table order)
+-- 1. (pk)
+-- 2. (decides table order)
+-- 3. (only one per table)
+
+-- non clustered 
+-- 1. ( non pk)
+-- 2. (not decides table order)
+-- 3. (Many per table)
+
+
+SELECT *
+FROM Employees
+WHERE [Name] = 'ABC 893939'
+-- 10.68
+
+CREATE INDEX inx on Employees(Name)
+
+SELECT *
+FROM Employees
+WHERE [Name] = 'ABC 893939'
+-- 0.0032
+
+-- DROP INDEX inx on Employees
+
+CREATE TABLE [tblEmployee]
+(
+    [Id] int Primary Key,
+    [Name] nvarchar(50),
+    [Salary] int,
+    [Gender] nvarchar(10),
+    [City] nvarchar(50)
+)
+
+Insert into tblEmployee
+Values(3, 'John', 4500, 'Male', 'New York')
+Insert into tblEmployee
+Values(1, 'Sam', 2500, 'Male', 'London')
+Insert into tblEmployee
+Values(4, 'Sara', 5500, 'Female', 'Tokyo')
+Insert into tblEmployee
+Values(5, 'Todd', 3100, 'Male', 'Toronto')
+Insert into tblEmployee
+Values(2, 'Pam', 6500, 'Female', 'Sydney')
+
+Select *
+from tblEmployee
+
+Create Clustered Index IX_tblEmployee_Gender_Salary
+ON tblEmployee(Gender DESC, Salary ASC)
+
+exec sp_helpindex tblEmployee
+
+select
+    Rank() over(Partition by Gender order by Salary desc) AS Ranking,
+    *
+from tblEmployee
+order by Salary desc
+
+-- Unique vs non-Unique Index
+
+-- Select rows from a Table or View 'TableOrViewName' in schema 'SchemaName'
+SELECT *
+FROM Actors
+
+BEGIN TRANSACTION
+Update Actors 
+set FirstName = 'Darling Prabhas'
+WHERE ActorID = 11
+COMMIT TRANSACTION
+
+select *
+from Actors

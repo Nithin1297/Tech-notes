@@ -3,7 +3,6 @@
 // "editor.fontLigatures": true,
 // "terminal.integrated.fontFamily": "monospace",
 // "editor.fontSize": 13
-
 "editor.fontFamily": "Fira Code",
 "editor.fontLigatures": true,
 }

@@ -1,6 +1,7 @@
 # 24TH jUNE
 
 - refer views.sql
+- Procedures
 
 > Indexing
 

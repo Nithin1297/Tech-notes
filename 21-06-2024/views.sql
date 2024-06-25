@@ -559,5 +559,59 @@ set FirstName = 'Darling Prabhas'
 WHERE ActorID = 11
 COMMIT TRANSACTION
 
+SELECT *
+FROM Actors
+
+-- SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+-- SELECT *
+-- FROM Actors
+
+-- June 25
+
+GO
+-- Batch is a set of SQL commands
+ALTER PROCEDURE spActorChangeOfTitle
+    @name nvarchar(30),
+    @id INT
+AS
+BEGIN
+
+    BEGIN TRY
+    BEGIN TRANSACTION
+Update Actors 
+set FirstName = @name
+WHERE ActorID = @id
+COMMIT TRANSACTION
+END TRY
+
+BEGIN CATCH
+    ROLLBACK 
+END CATCH
+
+END
+GO
+
+-- DROP PROCEDURE spActorChangeOfTitle
+
+EXEC spActorChangeOfTitle 'Raju',121
+
+CREATE Index IX_Filtered_Year
+on Movies(Title)
+WHERE ReleaseYear = 2020
+
 select *
-from Actors
+from Movies
+ALTER INDEX IX_Filtered_Year on Movies DISABLE;
+
+ALTER INDEX IX_Filtered_Year on Movies Rebuild;
+
+exec sp_rename 'IX_Filtered_Year','IX_Filter_Year'
+
+Select coalesce(NULL,NULL,'First not null value','hii') as FirstNotNull
+
+SELECT DB_NAME() AS CURRENTDatabase
+SELECT @@VERSION AS SqlServisionVersion
+SELECT @@SERVERNAME AS ServerName
+SELECT @@SERVICENAME as ServiceName
+SELECT SYSTEM_USER as SystemUser
+

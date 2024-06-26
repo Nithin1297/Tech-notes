@@ -105,7 +105,6 @@ ALTER PROC UpdateEmployeeInfo
 AS
 BEGIN
 
-
     BEGIN TRY
     BEGIN TRANSACTION
     DECLARE @sal INT
@@ -184,19 +183,17 @@ BEGIN
      IF Exists (select *
     from Departments
     where @NewDepartmentID = DepartmentID)
-        CREATE TABLE Transfers
-    (
-        EmployeeID int primary key,
-        OldDepartmentID int,
-        NewDepartmentID int,
-        TransferDate DATE
-    )
+      
 DECLARE @oldDep INT
 SET @oldDep = (select d.DepartmentID
     FROM Employees e
         JOIN Departments d on d.DepartmentID = e.DepartmentID
     WHERE e.EmployeeID = @EmployeeID)
 
+ UPDATE Employees
+        SET FirstName =  @NewFirstName , LastName = @NewLastName ,DepartmentID = @NewDepartmentID ,
+        Salary = @NewSalary 
+        WHERE EmployeeID =  @EmployeeID
 
     INSERT into Transfers
     VALUES(@EmployeeID, @oldDep, @NewDepartmentID, GETDATE())
@@ -224,6 +221,9 @@ DROP TABLE Transfers
 
 -- Task 4
 -- Reverting an Employee Transfer
+
+
+
 
 -- `EXEC RevertLastTransfer @EmployeeID = 2`
 

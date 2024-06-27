@@ -168,7 +168,7 @@ SELECT region,product_type,sum(sales_amount)
 FROM sales_data
 group by region,product_type;
 
--- Common Table Experssion
+-- Common Table Expression
 WITH salesCte 
 	AS
 	(

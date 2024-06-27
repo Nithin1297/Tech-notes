@@ -85,6 +85,10 @@ select *
 from movies
 for xml path
 
+select *
+from movies
+for xml auto
+
     select
         movieId,
         movietitle,
@@ -103,7 +107,7 @@ for xml path
 
             select *
             from movies
-            for json auto
+            for json auto,root('Movies')
 
                 select *
                 from movies
@@ -116,6 +120,14 @@ for xml path
                         directorID
                     from movies
                     for json path, Root('Movies')
+
+					select
+                        movieId as [Id], -- renaming the key
+                        movietitle as 'MovieInfo.movietitle', -- nesting json
+                        [releaseYear] as 'MovieInfo.releaseYear', -- nesting json
+                        directorID
+                    from movies
+                    for json auto, Root('Movies') -- will not work
 
 
 
@@ -186,7 +198,7 @@ create Function sayhiii(@name varchar(20))
 Returns varchar(20)
 as 
 begin
-    return ('Hii ' + @name)
+return ('Hii ' + @name)
 end;
 
 
@@ -206,19 +218,23 @@ from movies
 
 select *, dbo.calcYear(year(releaseYear)) as age
 from movies m
-                                        order by m.releaseYear desc
+order by m.releaseYear desc
 offset 3 rows fetch next 3 rows only
 
 -- Views
 
 create view vwLastDeadeMovies
 AS
-select movietitle,releaseYear from movies
+select movietitle, releaseYear
+from movies
 -- where releaseYear between 2024-05-20 and 2024-05-23
 drop view vwLastDeadeMovies
 
-select * from movies
-select * from vwLastDeadeMovies -- virtual Table / copy by reference
+select *
+from movies
+select *
+from vwLastDeadeMovies
+-- virtual Table / copy by reference
 -- Benifits of views
 -- complex statement - easy readability
 -- adstraction
@@ -231,5 +247,6 @@ from movies m
 join director d on d.directorID = m.directorID
 where d.directorName = 'phani'
 
-select * from vwPhaniMovies
+select *
+from vwPhaniMovies
 

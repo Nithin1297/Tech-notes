@@ -188,6 +188,41 @@ for xml auto
                                     FOR XML Path ('Movies'), Root('Root')
 
 
+DECLARE @jsonData NVARCHAR(MAX)
+SET @jsonData = N'{
+    "Books": [
+        {"Title": "SQL Essentials", "Author": "John Doe"},
+        {"Title": "Learning XML", "Author": "Jane Smith"}
+    ],
+    "sales": 4000
+}'
+ 
+SELECT Title, Author
+FROM OPENJSON(@jsonData, '$.Books')
+WITH (
+    Title NVARCHAR(100),
+    Author NVARCHAR(100)
+)
+
+
+DECLARE @jsonData NVARCHAR(MAX)
+SET @jsonData = N'{
+    "Books": [
+        {"id": "12345", "Details": {"Title": "SQL Essentials", "Author": "John Doe"}},
+        {"id": "67890", "Details": {"Title": "Learning XML", "Author": "Jane Smith"}}
+    ]
+}'
+ 
+SELECT id, Title, Author
+FROM OPENJSON(@jsonData, '$.Books')
+WITH (
+    id NVARCHAR(5),
+    Title NVARCHAR(100) '$.Details.Title',
+    Author NVARCHAR(100) '$.Details.Author'
+)
+ 
+
+
 
 select *
 from movies

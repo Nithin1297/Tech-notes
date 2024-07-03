@@ -59,6 +59,7 @@ VALUES
     (4, 4, '2024-04-20', 1, 12.00),
     (5, 5, '2024-05-25', 4, 35.96);
 
+
 -- Section 1: Questions
 
 -- Task 1
@@ -69,7 +70,7 @@ SELECT a.author_id, a.name, COUNT(distinct b.genre) as genre
 FROM authors a
     JOIN books b ON a.author_id = b.author_id
 GROUP BY a.author_id,a.name
-HAVING COUNT(b.genre) > 1
+HAVING COUNT(DISTINCT b.genre) > 1
 
 -- Task 2
 -- Write a query to find the books that have the highest sale total 
@@ -931,13 +932,6 @@ DELETE from sales WHERE sale_id = 5
 
 -- Create a trigger that prevents updates to the sales table if the new quantity 
 -- is negative.
-
-SELECT *
-FROM books
-SELECT *
-FROM authors
-SELECT *
-FROM sales
 
 go
 ALTER TRIGGER PreventNegativeQuantity
